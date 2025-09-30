@@ -12,15 +12,15 @@ class ImageListViewController: UIViewController {
     // MARK: Constants
 
     private static let imageCellReuseID = "imageCellReuseID"
-    private static let placeholderImageName = "Placeholder"
-    private static let itemsPerRow: CGFloat = 3
+    private static let itemsPerRow: CGFloat = 2
 
     // MARK: Dummy data
 
     // TODO: Remove when appropriate logic is added.
     private static let collectionViewColor = UIColor.yellow
     private static let vcViewColor = UIColor.red
-    private static let numberOfItemsInSection = 44
+
+    private lazy var imageURLs: [URL] = makeImageURLS(count: 100)
 
     // MARK: Properties
 
@@ -42,6 +42,26 @@ class ImageListViewController: UIViewController {
         view.backgroundColor = Self.vcViewColor
         view.addSubview(collectionView, pinToParent: true)
     }
+
+    // MARK: Private helpers
+
+    private func makeImageURLS(count: Int) -> [URL] {
+        var urls = [URL]()
+        for i in 1...count {
+            urls.append(URL(string: "https://picsum.photos/id/\(i)/300/300")!)
+        }
+
+        // Repeat images
+        for i in 1...5 {
+            urls.append(URL(string: "https://picsum.photos/id/\(i)/300/300")!)
+        }
+
+        for i in 1...5 {
+            urls.append(URL(string: "https://picsum.photos/id/\(i)/300/300")!)
+        }
+
+        return urls
+    }
 }
 
 // MARK: UICollectionViewDataSource
@@ -49,7 +69,7 @@ class ImageListViewController: UIViewController {
 extension ImageListViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return Self.numberOfItemsInSection
+        return imageURLs.count
     }
 
     func collectionView(_ collectionView: UICollectionView, 
@@ -60,7 +80,7 @@ extension ImageListViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
 
-        cell.configure(with: UIImage(named: Self.placeholderImageName))
+        cell.configure(with: imageURLs[indexPath.row])
         return cell
     }
 }

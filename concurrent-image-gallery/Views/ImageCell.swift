@@ -9,10 +9,16 @@ import UIKit
 
 class ImageCell: UICollectionViewCell {
 
+    // MARK: Constants
+    
+    private static let placeholderImageName = "Placeholder"
+
     // MARK: Properties
 
+    private var currentURL: URL?
+
     private lazy var imageView: UIImageView = {
-        let imageView = UIImageView()
+        let imageView = UIImageView(image: UIImage(named: Self.placeholderImageName))
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         return imageView
@@ -31,7 +37,18 @@ class ImageCell: UICollectionViewCell {
     
     // MARK: Public methods
 
-    func configure(with image: UIImage?) {
-        imageView.image = image
+    func configure(with url: URL) {
+        currentURL = url
+        ImageLoader.shared.fetchImage(for: url, completion: { [weak self] result in
+            DispatchQueue.main.async {
+                guard let self, self.currentURL == url else { return }
+                switch result {
+                    case .success(let image):
+                        self.imageView.image = image
+                    case .failure(let error):
+                        self.imageView.image = UIImage(named: Self.placeholderImageName)
+                }
+            }
+        })
     }
 }
